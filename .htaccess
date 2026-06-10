@@ -1,0 +1,28 @@
+# WP Light — multi-tenant routing + hardening.
+# No RewriteBase: these rules must work both at /wplite/ on the engine host
+# and at / when a client addon domain's docroot is this folder.
+RewriteEngine On
+
+# Block direct fetch of internal PHP files (admin/index.php stays reachable)
+RewriteRule ^(config\.php|lib\.php|seed\.php|Parsedown\.php)$ - [F]
+
+# Nothing under sites/ is ever served directly (must precede the -f/-d passthrough)
+RewriteRule ^sites(/|$) index.php [L]
+
+# Path-mode admin: /s/{slug}/admin/ -> real admin/index.php
+RewriteRule ^s/[a-z0-9][a-z0-9-]*/admin(/(index\.php)?)?$ admin/index.php [L]
+
+# Path-mode assets alias: /s/{slug}/assets/x -> real assets/x
+RewriteRule ^s/[a-z0-9][a-z0-9-]*/assets/(.+)$ assets/$1 [L]
+
+# Serve remaining real files and directories as-is
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Everything else (incl. uploads/* and feed.json) -> front controller
+RewriteRule ^ index.php [L]
+
+<IfModule mod_headers.c>
+Header set X-Content-Type-Options "nosniff"
+</IfModule>

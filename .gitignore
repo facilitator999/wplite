@@ -1,0 +1,6 @@
+# Tenant data never goes to the repo (configs hold password hashes)
+/sites/*
+!/sites/.htaccess
+!/sites/_template/
+/throttle/
+*.tmp.*
