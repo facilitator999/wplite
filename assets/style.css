@@ -299,8 +299,11 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 0 72px; }
 /* ---------- grid ---------- */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(2, 1fr); /* phones: 2-up, readable titles */
+  gap: 8px;
+}
+@media (min-width: 680px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
 }
 .tile {
   position: relative;
@@ -331,9 +334,9 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 0 72px; }
   position: absolute;
   z-index: 1;
   left: 0; right: 0; bottom: 0;
-  padding: 26px 10px 9px;
+  padding: 30px 12px 11px;
   color: #fff;
-  font-size: 11.5px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: .01em;
   line-height: 1.3;
