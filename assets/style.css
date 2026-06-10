@@ -13,6 +13,10 @@
 
 * { box-sizing: border-box; }
 
+/* always reserve the scrollbar gutter, so centered content doesn't
+   shift sideways between long pages (feed) and short ones (contact) */
+html { overflow-y: scroll; scrollbar-gutter: stable; }
+
 body {
   margin: 0;
   font-family: var(--sans);
