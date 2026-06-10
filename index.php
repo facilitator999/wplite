@@ -6,7 +6,9 @@ if (PHP_SAPI === 'cli-server') {
     if (preg_match('#^/sites/[a-z0-9-]+/uploads/[\w.-]+\.(jpe?g|png|webp|gif|svg)$#', $p) && is_file(__DIR__ . $p)) {
         return false;
     }
-    if (str_starts_with($p, '/sites/') || preg_match('#^/(config|lib|seed|Parsedown)\.php$#', $p)) {
+    if (str_starts_with($p, '/sites/') || str_starts_with($p, '/data/') || str_starts_with($p, '/lib/')
+        || str_starts_with($p, '/admin/actions/') || $p === '/admin/helpers.php'
+        || preg_match('#^/(config|lib|seed|install|Parsedown)\.php$#', $p)) {
         http_response_code(403);
         exit('Forbidden');
     }
@@ -39,6 +41,12 @@ if (preg_match('#^uploads/([^/]+)$#', $route, $m)) {
 /* admin — reached here when no web-server rewrite exists (nginx + mu-plugin) */
 if ($route === 'admin' || str_starts_with($route, 'admin/')) {
     require __DIR__ . '/admin/index.php';
+    exit;
+}
+
+/* engine installer / master dashboard — root mode only, never on tenant domains or previews */
+if ($route === 'install' && WPL_MODE === 'root') {
+    require __DIR__ . '/install.php';
     exit;
 }
 

@@ -11,7 +11,7 @@ AI made heavyweight CMSes redundant for personal publishing. Founders, MPs, and 
 ## Features
 
 - **Instagram-style public site** — logo + social icons, portrait & blurb hero, auto-sliding featured carousel, 3-column endless-scroll grid, elegant editorial typography (serif display, drop caps, warm paper palette)
-- **Multi-tenant** — one engine serves unlimited client sites; each client is a folder under `sites/{slug}/` holding only their `config.php`, markdown content, and uploads
+- **Multi-tenant** — one engine serves unlimited client sites; each client is markdown content + uploads under `sites/{slug}/` plus a private config in `data/{slug}/`, created from the web installer at `/install`
 - **Three ways to reach a site** — client's own domain (domain mode), `/s/{slug}/` previews on the engine host (path mode), or the unprefixed fallback site (root mode)
 - **Admin panel** — warm claude-style theme; post CRUD with image upload, page editor, settings (name, blurb, accent colour, socials, password). One password per site, no user accounts
 - **Markdown content** — posts are front-matter markdown files; editable by the admin panel, any text editor, or an AI agent
@@ -21,25 +21,32 @@ AI made heavyweight CMSes redundant for personal publishing. Founders, MPs, and 
 ## File map
 
 ```
-index.php        front controller: routes home / post / page / feed.json / uploads / admin
-lib.php          engine: site resolution, content repo, auth, CSRF, throttle, image pipeline
-admin/index.php  the whole admin (login, posts, pages, settings)
+index.php        front controller: routes home / post / page / feed.json / uploads / admin / install
+install.php      engine installer + master dashboard (list & create sites from the browser)
+lib.php          engine core: site resolution, config, content repo, markdown
+lib/security.php sessions, login throttle, CSRF, site-admin + master auth
+lib/images.php   upload validation, GD re-encoding, thumbnails, upload serving
+admin/           index.php (auth + dispatch), helpers.php, actions/{posts,pages,settings}.php
 templates/       layout, home, post, page, credit
 assets/          style.css (public theme), admin.css (admin theme), app.js (carousel + endless scroll)
-sites/_template/ scaffold for new client sites
+data/            web-blocked engine data: master.php, {slug}/config.php, throttle/ (not in git)
+sites/{slug}/    a tenant's public-ish half: content/ markdown + uploads/ images
+sites/_template/ starter content copied into new sites
 seed.php         CLI demo-content generator:  php seed.php [site-slug]
 deploy/          wplite-router.php — WordPress mu-plugin for nginx hosts (see below)
 ```
 
+Secrets and tenant configs live under `data/` (denied to the web on Apache; on
+nginx-style hosts they are plain PHP files that execute to nothing, so never
+store non-PHP secrets there).
+
 ## Creating a client site
 
-```bash
-cp -a sites/_template sites/acme
-php -r "echo password_hash('THEIR-PASSWORD', PASSWORD_DEFAULT), PHP_EOL;"  # paste into config
-# edit sites/acme/config.php: site_name, blurb, socials, accent, admin_hash
-```
+Open `https://your-host/wplite/install`. On the first visit it asks you to set
+the engine **master password**; after that it shows a dashboard of all sites
+with a create form (slug, name, site admin password) — no CLI needed.
 
-Preview immediately at `https://your-host/wplite/s/acme/` (admin at `.../s/acme/admin/`). To go live on their domain, point it at the install (docroot = this folder) and add it to `'domains' => ['acme.com']` in their config.
+Preview immediately at `https://your-host/wplite/s/acme/` (admin at `.../s/acme/admin/`). To go live on their domain, point it at the install (docroot = this folder) and add it to `'domains' => ['acme.com']` in `data/acme/config.php`.
 
 ## Deployment
 
@@ -52,6 +59,8 @@ Preview immediately at `https://your-host/wplite/s/acme/` (admin at `.../s/acme/
 php seed.php                                   # generate demo site content
 php -S localhost:8090 -t . index.php           # pretty URLs work via the router shim
 ```
+
+Then visit `http://localhost:8090/install` once to set the master password.
 
 ---
 

@@ -3,10 +3,18 @@
 # and at / when a client addon domain's docroot is this folder.
 RewriteEngine On
 
-# Block direct fetch of internal PHP files (admin/index.php stays reachable)
-RewriteRule ^(config\.php|lib\.php|seed\.php|Parsedown\.php)$ - [F]
+# Block direct fetch of internal PHP files (admin/index.php stays reachable;
+# /install reaches install.php through the front controller)
+RewriteRule ^(config\.php|lib\.php|seed\.php|install\.php|Parsedown\.php)$ - [F]
+RewriteRule ^lib(/|$) - [F]
+RewriteRule ^admin/(helpers\.php|actions(/|$)) - [F]
 
-# Nothing under sites/ is ever served directly (must precede the -f/-d passthrough)
+# Engine data (site configs, master hash, throttle state) is never served
+RewriteRule ^data(/|$) - [F]
+
+# Tenant uploads are public statics; everything else under sites/ goes to the
+# app, which 404s it (must precede the -f/-d passthrough)
+RewriteRule ^sites/[a-z0-9][a-z0-9-]*/uploads/[\w.-]+\.(jpe?g|png|webp|gif|svg)$ - [L]
 RewriteRule ^sites(/|$) index.php [L]
 
 # Path-mode admin: /s/{slug}/admin/ -> real admin/index.php

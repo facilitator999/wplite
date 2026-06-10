@@ -1,1 +1,6 @@
+# Markdown content and anything else in here is app-internal; only uploaded
+# images are public. (Site configs live in data/, not here.)
 Require all denied
+<FilesMatch "\.(jpe?g|png|webp|gif|svg)$">
+    Require all granted
+</FilesMatch>

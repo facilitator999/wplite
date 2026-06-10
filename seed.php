@@ -11,8 +11,8 @@ require __DIR__ . '/lib.php';
 @mkdir(WPL_POSTS, 0755, true);
 @mkdir(WPL_PAGES, 0755, true);
 @mkdir(WPL_UPLOADS, 0755, true);
-if (!is_file(WPL_SITE_DIR . '/config.php')) {
-    copy(WPL_ROOT . '/sites/_template/config.php', WPL_SITE_DIR . '/config.php');
+if (!is_file(wpl_site_config_file(WPL_SITE))) {
+    wpl_write_site_config(WPL_SITE, wpl_default_config());
 }
 echo 'Seeding site: ' . WPL_SITE . "\n";
 

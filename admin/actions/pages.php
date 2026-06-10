@@ -1,0 +1,55 @@
+<?php
+/** Pages: list + editor (?action=pages). */
+
+defined('WPL_ADMIN') || exit;
+
+$slug = $_GET['slug'] ?? '';
+$editing = $slug !== '' ? wpl_get(WPL_PAGES, $slug) : null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!wpl_csrf_check()) {
+        $err = 'Session expired — please retry.';
+    } else {
+        $title = trim((string)($_POST['title'] ?? ''));
+        $newSlug = slugify((string)($_POST['slug'] ?? '')) ?: slugify($title);
+        $body = str_replace("\r\n", "\n", (string)($_POST['body'] ?? ''));
+        $err = admin_validate_entry($editing['slug'] ?? null, $title, $newSlug,
+            [WPL_POSTS],
+            'Slug must be lowercase letters, numbers and hyphens.',
+            'A post with slug "%s" already exists.');
+        if ($err === '') {
+            if (admin_write_entry(WPL_PAGES, $editing['slug'] ?? null, $newSlug, ['title' => $title], $body)) {
+                $msg = 'Page saved.';
+                $editing = wpl_get(WPL_PAGES, $newSlug);
+                $slug = $newSlug;
+            } else {
+                $err = 'Could not write the page file.';
+            }
+        }
+    }
+}
+
+admin_head('Pages', $config);
+admin_nav('pages');
+?>
+<h1>Pages</h1>
+<?php if ($msg): ?><p class="msg"><?= esc($msg) ?></p><?php endif; ?>
+<?php if ($err): ?><p class="msg err"><?= esc($err) ?></p><?php endif; ?>
+<table>
+  <?php foreach (wpl_pages() as $p): ?>
+    <tr>
+      <td><a href="<?= esc(wpl_url('admin/?action=pages&slug=' . $p['slug'])) ?>"><?= esc($p['title']) ?></a></td>
+      <td>/<?= esc($p['slug']) ?></td>
+    </tr>
+  <?php endforeach; ?>
+</table>
+<h2><?= $editing ? 'Edit page' : 'New page' ?></h2>
+<form method="post">
+  <?= admin_csrf_field() ?>
+  <label>Title <input type="text" name="title" value="<?= esc($editing['title'] ?? '') ?>" required></label>
+  <label>Slug (URL) <input type="text" name="slug" value="<?= esc($editing['slug'] ?? '') ?>" placeholder="auto from title"></label>
+  <label>Body (markdown) <textarea name="body"><?= esc($editing['body'] ?? '') ?></textarea></label>
+  <button class="btn">Save page</button>
+</form>
+<?php
+admin_foot();

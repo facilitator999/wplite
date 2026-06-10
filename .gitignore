@@ -1,6 +1,7 @@
-# Tenant data never goes to the repo (configs hold password hashes)
+# Tenant/engine data never goes to the repo (configs and master.php hold password hashes)
+/data/*
+!/data/.htaccess
 /sites/*
 !/sites/.htaccess
 !/sites/_template/
-/throttle/
 *.tmp.*
