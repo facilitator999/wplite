@@ -44,7 +44,8 @@ $icons = [
         <?php endforeach; ?>
       </nav>
     <?php endif; ?>
-    <nav class="socials" aria-label="Social links">
+    <?php /* class deliberately avoids "social*" — adblock cosmetic filters hide those names site-wide */ ?>
+    <nav class="contact-icons" aria-label="Social links">
       <?php foreach ($config['socials'] as $key => $link): ?>
         <?php if ($link === '' || !isset($icons[$key])) continue; ?>
         <?php $href = $key === 'email' ? 'mailto:' . $link : $link; ?>

@@ -110,8 +110,8 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 0 72px; }
   .header-nav { display: flex; }
 }
 
-.socials { display: flex; gap: 10px; align-items: center; }
-.socials a {
+.contact-icons { display: flex; gap: 10px; align-items: center; }
+.contact-icons a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -122,8 +122,8 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 0 72px; }
   box-shadow: 0 4px 10px -6px var(--accent);
   transition: filter .15s, transform .15s, box-shadow .15s;
 }
-.socials svg { width: 18px; height: 18px; fill: #fff; }
-.socials a:hover {
+.contact-icons svg { width: 18px; height: 18px; fill: #fff; }
+.contact-icons a:hover {
   filter: brightness(1.12);
   transform: translateY(-1px);
   box-shadow: 0 8px 16px -8px var(--accent);
