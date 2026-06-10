@@ -11,13 +11,18 @@
     var timer = null;
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    var userPaused = false;
+
     var go = function (i) {
       index = (i + slides) % slides;
       track.style.transform = 'translateX(-' + index * 100 + '%)';
-      dots.forEach(function (d, n) { d.classList.toggle('active', n === index); });
+      dots.forEach(function (d, n) {
+        d.classList.toggle('active', n === index);
+        if (n === index) { d.setAttribute('aria-current', 'true'); } else { d.removeAttribute('aria-current'); }
+      });
     };
     var play = function () {
-      if (reduced || timer) return;
+      if (reduced || userPaused || timer) return;
       timer = setInterval(function () { go(index + 1); }, 5000);
     };
     var pause = function () {
@@ -33,6 +38,21 @@
     });
 
     var carousel = track.closest('.carousel');
+
+    // WCAG 2.2.2: explicit pause/stop control for the auto-advancing slides
+    var pauseBtn = carousel.querySelector('.carousel-pause');
+    if (pauseBtn) {
+      if (reduced) { pauseBtn.hidden = true; } // autoplay never starts
+      pauseBtn.addEventListener('click', function () {
+        userPaused = !userPaused;
+        pauseBtn.setAttribute('aria-pressed', String(userPaused));
+        pauseBtn.setAttribute('aria-label', userPaused ? 'Play slideshow' : 'Pause slideshow');
+        pauseBtn.querySelector('.icon-pause').style.display = userPaused ? 'none' : '';
+        pauseBtn.querySelector('.icon-play').style.display = userPaused ? '' : 'none';
+        if (userPaused) { pause(); } else { play(); }
+      });
+    }
+
     carousel.addEventListener('pointerenter', pause);
     carousel.addEventListener('pointerleave', play);
     carousel.addEventListener('touchstart', pause, { passive: true });

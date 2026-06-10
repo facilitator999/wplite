@@ -8,7 +8,7 @@
   <p class="blurb"><?= esc($config['blurb']) ?></p>
   <?php $sidePages = wpl_pages_in('side', $pages); ?>
   <?php if ($sidePages): ?>
-    <nav class="profile-links" aria-label="Pages">
+    <nav class="profile-links" aria-label="Profile pages">
       <?php foreach ($sidePages as $p): ?>
         <a href="<?= esc(wpl_url($p['slug'])) ?>"><?= esc($p['title']) ?></a>
       <?php endforeach; ?>
