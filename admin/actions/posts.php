@@ -96,42 +96,56 @@ if ($action === 'edit') {
     ?>
     <h1><?= $editing && $slug !== '' ? 'Edit post' : 'New post' ?></h1>
     <?php if ($err): ?><p class="msg err"><?= esc($err) ?></p><?php endif; ?>
-    <form method="post" enctype="multipart/form-data">
-      <?= admin_csrf_field() ?>
-      <label>Title <input type="text" name="title" value="<?= esc($editing['title'] ?? '') ?>" required autofocus></label>
-      <label>Slug (URL) <input type="text" name="slug" value="<?= esc($editing['slug'] ?? '') ?>" placeholder="auto from title"></label>
-      <label>Date <input type="date" name="date" value="<?= esc($editing['date'] ?? date('Y-m-d')) ?>"></label>
-      <label>Status
-        <select name="status">
-          <option value="published">Published</option>
-          <option value="draft" <?= !empty($editing['draft']) ? 'selected' : '' ?>>Draft (hidden from the site)</option>
-        </select>
-      </label>
-      <label class="check"><input type="checkbox" name="featured" <?= !empty($editing['featured']) ? 'checked' : '' ?>> Featured (show in carousel)</label>
-      <label>Excerpt (short summary — used as the post's search/share description)
-        <input type="text" name="excerpt" value="<?= esc($editing['excerpt'] ?? '') ?>" maxlength="200">
-      </label>
-      <label>Featured image <input type="file" name="image" accept="image/jpeg,image/png,image/webp">
-        <?php if (!empty($editing['image'])): ?><small>current: <?= esc($editing['image']) ?></small><?php endif; ?>
-      </label>
-      <label>More images (shown as a gallery in the post — select several at once)
-        <input type="file" name="gallery[]" accept="image/jpeg,image/png,image/webp" multiple>
-      </label>
-      <?php if (!empty($editing['images'])): ?>
-        <div class="gallery-manage">
-          <?php foreach ($editing['images'] as $img): ?>
-            <label class="gallery-item">
-              <img src="<?= esc(wpl_upload_url('thumb_' . preg_replace('/^img_/', '', $img))) ?>" alt="">
-              <span class="check"><input type="checkbox" name="remove_images[]" value="<?= esc($img) ?>"> remove</span>
-            </label>
-          <?php endforeach; ?>
-        </div>
-      <?php endif; ?>
-      <label>Body (markdown)
-        <textarea name="body"><?= esc($editing['body'] ?? '') ?></textarea>
-        <small>Tip: paste a YouTube link on its own line and it becomes an embedded video player.</small>
-      </label>
-      <button class="btn">Save post</button>
+    <form method="post" enctype="multipart/form-data" class="editor-form">
+
+      <div class="editor-main">
+        <?= admin_csrf_field() ?>
+        <label>Title <input type="text" name="title" value="<?= esc($editing['title'] ?? '') ?>" required autofocus></label>
+        <label>Excerpt (short summary — used as the post's search/share description)
+          <input type="text" name="excerpt" value="<?= esc($editing['excerpt'] ?? '') ?>" maxlength="200">
+        </label>
+        <label>Body (markdown)
+          <textarea name="body"><?= esc($editing['body'] ?? '') ?></textarea>
+          <small>Tip: paste a YouTube link on its own line and it becomes an embedded video player.</small>
+        </label>
+      </div>
+
+      <aside class="editor-side">
+        <fieldset class="settings-group">
+          <legend>Publish</legend>
+          <label>Status
+            <select name="status">
+              <option value="published">Published</option>
+              <option value="draft" <?= !empty($editing['draft']) ? 'selected' : '' ?>>Draft (hidden from the site)</option>
+            </select>
+          </label>
+          <label>Date <input type="date" name="date" value="<?= esc($editing['date'] ?? date('Y-m-d')) ?>"></label>
+          <label class="check"><input type="checkbox" name="featured" <?= !empty($editing['featured']) ? 'checked' : '' ?>> Featured (show in carousel)</label>
+          <label>Slug (URL) <input type="text" name="slug" value="<?= esc($editing['slug'] ?? '') ?>" placeholder="auto from title"></label>
+          <button class="btn">Save post</button>
+        </fieldset>
+
+        <fieldset class="settings-group">
+          <legend>Images</legend>
+          <label>Featured image <input type="file" name="image" accept="image/jpeg,image/png,image/webp">
+            <?php if (!empty($editing['image'])): ?><small>current: <?= esc($editing['image']) ?></small><?php endif; ?>
+          </label>
+          <label>Gallery (shown in the post — select several at once)
+            <input type="file" name="gallery[]" accept="image/jpeg,image/png,image/webp" multiple>
+          </label>
+          <?php if (!empty($editing['images'])): ?>
+            <div class="gallery-manage">
+              <?php foreach ($editing['images'] as $img): ?>
+                <label class="gallery-item">
+                  <img src="<?= esc(wpl_upload_url('thumb_' . preg_replace('/^img_/', '', $img))) ?>" alt="">
+                  <span class="check"><input type="checkbox" name="remove_images[]" value="<?= esc($img) ?>"> remove</span>
+                </label>
+              <?php endforeach; ?>
+            </div>
+          <?php endif; ?>
+        </fieldset>
+      </aside>
+
     </form>
     <?php
     admin_foot();

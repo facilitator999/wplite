@@ -191,6 +191,17 @@ textarea {
 .nav-locations legend { font-size: 13px; font-weight: 600; padding: 0 6px; }
 .nav-locations small { width: 100%; color: var(--muted); font-weight: 400; }
 
+/* post editor: writing column + sticky publish/images sidebar on desktop */
+.editor-form { display: grid; gap: 22px; align-items: start; }
+.editor-main { display: grid; gap: 16px; min-width: 0; }
+.editor-side { display: grid; gap: 22px; }
+.editor-side .settings-group { grid-template-columns: 1fr; } /* never two-col in the narrow rail */
+.editor-side .btn { justify-self: start; }
+@media (min-width: 1000px) {
+  .editor-form { grid-template-columns: minmax(0, 1fr) 340px; }
+  .editor-side { position: sticky; top: 24px; }
+}
+
 /* settings: grouped sections, fields flow into two columns on desktop */
 .settings-form { gap: 22px; }
 .settings-group {
