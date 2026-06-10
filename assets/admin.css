@@ -170,6 +170,19 @@ textarea {
 .check { display: flex; align-items: center; gap: 9px; font-size: 14px; }
 .check input { accent-color: var(--accent); width: 16px; height: 16px; }
 
+.gallery-manage { display: flex; flex-wrap: wrap; gap: 12px; }
+.gallery-item { width: 104px; font-weight: 400; cursor: pointer; }
+.gallery-item img {
+  width: 104px;
+  height: 104px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.gallery-item .check { font-size: 12px; margin-top: 5px; color: var(--muted); }
+.gallery-item .check input { width: 13px; height: 13px; }
+.gallery-item:has(input:checked) img { outline: 2px solid #b3261e; opacity: .55; }
+
 .btn {
   display: inline-block;
   background: var(--accent);

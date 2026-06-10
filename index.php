@@ -26,7 +26,7 @@ if (PHP_SAPI === 'cli-server') {
     }
 }
 
-require __DIR__ . '/lib.php';
+require_once __DIR__ . '/lib.php';
 
 $config = wpl_config();
 $route = wpl_route();

@@ -4,7 +4,7 @@
  * Single file, ?action= dispatch. All writes require auth + CSRF.
  */
 
-require dirname(__DIR__) . '/lib.php';
+require_once dirname(__DIR__) . '/lib.php';
 
 $config = wpl_config();
 $action = $_GET['action'] ?? 'dashboard';
@@ -124,6 +124,7 @@ if ($action === 'edit') {
             $date = preg_match('/^\d{4}-\d{2}-\d{2}$/', $_POST['date'] ?? '') ? $_POST['date'] : date('Y-m-d');
             $body = str_replace("\r\n", "\n", (string)($_POST['body'] ?? ''));
             $image = $editing['image'] ?? '';
+            $gallery = $editing['images'] ?? [];
 
             if ($title === '') {
                 $err = 'Title is required.';
@@ -144,11 +145,38 @@ if ($action === 'edit') {
                         $image = $result;
                     }
                 }
+                // Gallery: drop the ones ticked for removal, then add new uploads.
+                foreach (array_map('basename', (array)($_POST['remove_images'] ?? [])) as $r) {
+                    if (in_array($r, $gallery, true)) {
+                        wpl_delete_images($r);
+                        $gallery = array_values(array_diff($gallery, [$r]));
+                    }
+                }
+                if ($err === '' && !empty($_FILES['gallery']['name'][0])) {
+                    foreach ((array)$_FILES['gallery']['name'] as $i => $n) {
+                        if ($n === '') {
+                            continue;
+                        }
+                        $result = wpl_process_upload([
+                            'name' => $n,
+                            'type' => $_FILES['gallery']['type'][$i],
+                            'tmp_name' => $_FILES['gallery']['tmp_name'][$i],
+                            'error' => $_FILES['gallery']['error'][$i],
+                            'size' => $_FILES['gallery']['size'][$i],
+                        ]);
+                        if (str_starts_with($result, 'error:')) {
+                            $err = '"' . $n . '": ' . substr($result, 6);
+                            break;
+                        }
+                        $gallery[] = $result;
+                    }
+                }
                 if ($err === '') {
                     $meta = [
                         'title' => $title,
                         'date' => $date,
                         'image' => $image,
+                        'images' => implode(' ', $gallery),
                         'featured' => isset($_POST['featured']),
                     ];
                     if (wpl_write(WPL_POSTS . "/$newSlug.md", wpl_serialize($meta, $body))) {
@@ -164,7 +192,8 @@ if ($action === 'edit') {
             // Re-show submitted values on error.
             $editing = [
                 'slug' => $newSlug, 'title' => $title, 'date' => $date,
-                'image' => $image, 'featured' => isset($_POST['featured']), 'body' => $body,
+                'image' => $image, 'images' => $gallery,
+                'featured' => isset($_POST['featured']), 'body' => $body,
             ];
         }
     }
@@ -183,7 +212,23 @@ if ($action === 'edit') {
       <label>Featured image <input type="file" name="image" accept="image/jpeg,image/png,image/webp">
         <?php if (!empty($editing['image'])): ?><small>current: <?= esc($editing['image']) ?></small><?php endif; ?>
       </label>
-      <label>Body (markdown) <textarea name="body"><?= esc($editing['body'] ?? '') ?></textarea></label>
+      <label>More images (shown as a gallery in the post — select several at once)
+        <input type="file" name="gallery[]" accept="image/jpeg,image/png,image/webp" multiple>
+      </label>
+      <?php if (!empty($editing['images'])): ?>
+        <div class="gallery-manage">
+          <?php foreach ($editing['images'] as $img): ?>
+            <label class="gallery-item">
+              <img src="<?= esc(wpl_upload_url('thumb_' . preg_replace('/^img_/', '', $img))) ?>" alt="">
+              <span class="check"><input type="checkbox" name="remove_images[]" value="<?= esc($img) ?>"> remove</span>
+            </label>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+      <label>Body (markdown)
+        <textarea name="body"><?= esc($editing['body'] ?? '') ?></textarea>
+        <small>Tip: paste a YouTube link on its own line and it becomes an embedded video player.</small>
+      </label>
       <button class="btn">Save post</button>
     </form>
     <?php
@@ -202,6 +247,9 @@ if ($action === 'delete' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($post !== null) {
             if ($post['image'] !== '') {
                 wpl_delete_images($post['image']);
+            }
+            foreach ($post['images'] as $img) {
+                wpl_delete_images($img);
             }
             @unlink(WPL_POSTS . "/$slug.md");
         }

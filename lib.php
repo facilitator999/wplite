@@ -242,6 +242,8 @@ function wpl_hydrate(string $slug, array $doc): array
         'date' => $m['date'] ?? '',
         'image' => $image,
         'thumb' => $image !== '' ? 'thumb_' . preg_replace('/^img_/', '', $image) : '',
+        'images' => array_values(array_filter(array_map('basename',
+            preg_split('/\s+/', $m['images'] ?? '', -1, PREG_SPLIT_NO_EMPTY)))),
         'featured' => in_array(strtolower($m['featured'] ?? ''), ['true', 'yes', '1'], true),
         'excerpt' => $m['excerpt'] ?? mb_substr(trim(strip_tags($doc['body'])), 0, 140),
         'body' => $doc['body'],
@@ -283,6 +285,15 @@ function wpl_pages(): array
     return $pages;
 }
 
+/** Extract a YouTube video id from a watch/share/shorts/embed URL, or null. */
+function wpl_youtube_id(string $url): ?string
+{
+    if (preg_match('#^https?://(?:www\.|m\.)?(?:youtube\.com/(?:watch\?v=|shorts/|live/|embed/)|youtu\.be/)([\w-]{6,20})#', trim($url), $m)) {
+        return $m[1];
+    }
+    return null;
+}
+
 function wpl_markdown(string $text): string
 {
     static $parser = null;
@@ -291,7 +302,28 @@ function wpl_markdown(string $text): string
         $parser = new Parsedown();
         $parser->setSafeMode(true);
     }
-    return $parser->text($text);
+
+    // A YouTube link alone on a line becomes an embedded player. Tokenize
+    // before parsing (safe mode would escape an iframe), swap in after.
+    $embeds = [];
+    $lines = preg_split('/\R/', $text);
+    foreach ($lines as $i => $line) {
+        $id = wpl_youtube_id(trim($line));
+        if ($id !== null) {
+            $token = 'WPLYTEMBED' . count($embeds) . 'X';
+            $embeds[$token] = '<div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/'
+                . esc($id) . '" title="YouTube video" loading="lazy"'
+                . ' allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"'
+                . ' allowfullscreen></iframe></div>';
+            $lines[$i] = $token;
+        }
+    }
+
+    $html = $parser->text(implode("\n", $lines));
+    foreach ($embeds as $token => $embed) {
+        $html = str_replace(['<p>' . $token . '</p>', $token], [$embed, $embed], $html);
+    }
+    return $html;
 }
 
 /** Atomic write: temp file in same dir + rename. */
