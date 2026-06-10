@@ -171,6 +171,7 @@ textarea {
 .check input { accent-color: var(--accent); width: 16px; height: 16px; }
 
 .btn {
+  display: inline-block;
   background: var(--accent);
   color: #fff;
   border: 0;
@@ -184,7 +185,17 @@ textarea {
   box-shadow: var(--shadow);
   transition: background .12s, transform .08s;
 }
-.btn:hover { background: var(--accent-hover); }
+.btn:hover { background: var(--accent-hover); color: #fff; }
+
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.page-head h1 { margin: 0; }
+.page-head .btn { padding: 9px 18px; }
 .btn:active { transform: translateY(1px); }
 .btn-danger { background: transparent; color: #b3261e; box-shadow: none; padding: 6px 10px; font-size: 13px; }
 .btn-danger:hover { background: #fdecea; }

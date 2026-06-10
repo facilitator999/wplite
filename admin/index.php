@@ -76,7 +76,6 @@ function admin_nav(string $active = ''): void
     $config = wpl_config();
     $items = [
         'posts' => ['Posts', wpl_url('admin/')],
-        'new' => ['New post', wpl_url('admin/?action=edit')],
         'pages' => ['Pages', wpl_url('admin/?action=pages')],
         'settings' => ['Settings', wpl_url('admin/?action=settings')],
     ];
@@ -171,7 +170,7 @@ if ($action === 'edit') {
     }
 
     admin_head($editing ? 'Edit post' : 'New post', $config);
-    admin_nav($editing && $slug !== '' ? 'posts' : 'new');
+    admin_nav('posts');
     ?>
     <h1><?= $editing && $slug !== '' ? 'Edit post' : 'New post' ?></h1>
     <?php if ($err): ?><p class="msg err"><?= esc($err) ?></p><?php endif; ?>
@@ -362,7 +361,10 @@ if (isset($_GET['saved'])) {
     $msg = 'Post saved: ' . $_GET['saved'];
 }
 ?>
-<h1>Posts</h1>
+<div class="page-head">
+  <h1>Posts</h1>
+  <a class="btn" href="<?= esc(wpl_url('admin/?action=edit')) ?>">+ New post</a>
+</div>
 <?php if ($msg): ?><p class="msg"><?= esc($msg) ?></p><?php endif; ?>
 <table>
   <tr><th>Title</th><th>Date</th><th>Featured</th><th></th></tr>
