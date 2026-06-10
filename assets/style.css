@@ -79,18 +79,16 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 0 72px; }
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #f3efe7;
-  border: 1px solid var(--line);
-  transition: background .15s, border-color .15s, transform .15s, box-shadow .15s;
-}
-.socials svg { width: 17px; height: 17px; fill: var(--ink); opacity: .8; transition: fill .15s, opacity .15s; }
-.socials a:hover {
   background: var(--accent);
-  border-color: var(--accent);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px -8px var(--accent);
+  box-shadow: 0 4px 10px -6px var(--accent);
+  transition: filter .15s, transform .15s, box-shadow .15s;
 }
-.socials a:hover svg { fill: #fff; opacity: 1; }
+.socials svg { width: 18px; height: 18px; fill: #fff; }
+.socials a:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px -8px var(--accent);
+}
 
 /* ---------- profile layout (facebook-style: sticky profile left, feed right) ---------- */
 .profile-layout { padding: 24px 16px 0; }
