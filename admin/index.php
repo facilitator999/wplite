@@ -59,6 +59,7 @@ function admin_head(string $title, array $config): void
 <meta name="robots" content="noindex">
 <title><?= esc($title) ?> — WPlite Admin</title>
 <link rel="stylesheet" href="<?= esc(wpl_url('assets/admin.css')) ?>?v=<?= filemtime(WPL_ROOT . '/assets/admin.css') ?>">
+<link rel="stylesheet" href="<?= esc(wpl_url('assets/easymde.min.css')) ?>?v=2.20.0">
 </head>
 <body class="admin">
 <div class="admin-wrap">
@@ -67,7 +68,27 @@ function admin_head(string $title, array $config): void
 
 function admin_foot(): void
 {
-    echo '</main></div></body></html>';
+    // Rich markdown editor on any page with a body textarea (progressive
+    // enhancement — the plain textarea still works without JS).
+    ?>
+    <script src="<?= esc(wpl_url('assets/easymde.min.js')) ?>?v=2.20.0"></script>
+    <script>
+    (function () {
+      var ta = document.querySelector('textarea[name="body"]');
+      if (!ta || !window.EasyMDE) return;
+      new EasyMDE({
+        element: ta,
+        spellChecker: false,
+        status: false,
+        forceSync: true,
+        minHeight: window.innerWidth < 760 ? '50vh' : '320px',
+        toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|',
+                  'link', '|', 'preview', 'fullscreen'],
+      });
+    })();
+    </script>
+    </main></div></body></html>
+    <?php
 }
 
 /** Sidebar navigation; also opens <main> — admin_foot() closes it. */

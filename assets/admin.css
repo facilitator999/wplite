@@ -243,6 +243,28 @@ td form { display: inline; }
 td a { font-weight: 600; color: var(--ink); }
 td a:hover { color: var(--accent-hover); }
 
+/* ---------- rich editor (EasyMDE) themed to match ---------- */
+.EasyMDEContainer .CodeMirror {
+  border: 1px solid var(--border);
+  border-radius: 0 0 10px 10px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.EasyMDEContainer .CodeMirror-focused { border-color: var(--accent); box-shadow: 0 0 0 3px var(--ring); }
+.editor-toolbar {
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  background: var(--surface);
+}
+.editor-toolbar button { color: var(--ink) !important; border-radius: 6px; }
+.editor-toolbar button.active, .editor-toolbar button:hover { background: var(--card); border-color: var(--border); }
+.editor-toolbar i.separator { border-color: var(--border); }
+.editor-preview { background: var(--bg); padding: 16px 20px; }
+.CodeMirror-fullscreen, .editor-toolbar.fullscreen, .editor-preview-side { z-index: 50; }
+
 /* ---------- messages ---------- */
 .msg {
   padding: 11px 15px;
@@ -265,14 +287,28 @@ td a:hover { color: var(--accent-hover); }
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
-    padding: 10px 14px;
+    padding: 8px 10px;
     border-right: 0;
     border-bottom: 1px solid var(--border);
   }
-  .brand { padding: 0 8px 0 0; }
+  .brand { padding: 0 6px 0 0; }
   .brand-text small { display: none; }
   .admin-nav { flex-direction: row; flex-wrap: wrap; }
+  .admin-nav a { padding: 7px 10px; }
   .admin-nav-bottom { margin-top: 0; padding-top: 0; border-top: 0; margin-left: auto; }
-  .admin-main { padding: 24px 18px 60px; }
+
+  /* Full-width editing surface */
+  .admin-main { padding: 16px 8px 60px; max-width: none; }
   h1 { font-size: 24px; }
+
+  /* 16px stops iOS auto-zoom on focus; fields use the whole screen width */
+  input[type=text], input[type=password], input[type=date],
+  input[type=url], input[type=email], textarea {
+    font-size: 16px;
+    padding: 12px 12px;
+  }
+  textarea { min-height: 55vh; font-size: 15px; }
+  .btn { width: 100%; text-align: center; }
+  .page-head .btn { width: auto; }
+  .login-card { padding: 30px 22px; }
 }
