@@ -30,6 +30,18 @@ function admin_foot(): void
     ?>
     <script src="<?= esc(wpl_url('assets/easymde.min.js')) ?>?v=2.20.0"></script>
     <script>
+    // Live thumbnail preview when picking an image file.
+    document.querySelectorAll('input[type=file][data-preview]').forEach(function (input) {
+      input.addEventListener('change', function () {
+        var img = document.getElementById(input.dataset.preview);
+        if (img && input.files && input.files[0]) {
+          img.src = URL.createObjectURL(input.files[0]);
+          img.hidden = false;
+        }
+      });
+    });
+    </script>
+    <script>
     (function () {
       var ta = document.querySelector('textarea[name="body"]');
       if (!ta || !window.EasyMDE) return;

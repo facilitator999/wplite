@@ -127,8 +127,9 @@ if ($action === 'edit') {
 
         <fieldset class="settings-group">
           <legend>Images</legend>
-          <label>Featured image <input type="file" name="image" accept="image/jpeg,image/png,image/webp">
-            <?php if (!empty($editing['image'])): ?><small>current: <?= esc($editing['image']) ?></small><?php endif; ?>
+          <label>Featured image <input type="file" name="image" accept="image/jpeg,image/png,image/webp" data-preview="preview-featured">
+            <img id="preview-featured" class="image-preview" alt=""
+              <?php if (!empty($editing['image'])): ?>src="<?= esc(wpl_upload_url('thumb_' . preg_replace('/^img_/', '', $editing['image']))) ?>"<?php else: ?>hidden<?php endif; ?>>
           </label>
           <label>Gallery (shown in the post — select several at once)
             <input type="file" name="gallery[]" accept="image/jpeg,image/png,image/webp" multiple>

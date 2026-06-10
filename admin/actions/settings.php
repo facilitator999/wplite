@@ -76,14 +76,17 @@ admin_nav('settings');
 
   <fieldset class="settings-group">
     <legend>Images</legend>
-    <label>Portrait photo <input type="file" name="portrait" accept="image/jpeg,image/png,image/webp">
-      <small>current: <?= esc($config['portrait'] ?: 'none') ?></small>
+    <label>Portrait photo <input type="file" name="portrait" accept="image/jpeg,image/png,image/webp" data-preview="preview-portrait">
+      <img id="preview-portrait" class="image-preview" alt=""
+        <?php if ($config['portrait']): ?>src="<?= esc(wpl_upload_url($config['portrait'])) ?>"<?php else: ?>hidden<?php endif; ?>>
       <?php if ($config['portrait']): ?>
         <span class="check"><input type="checkbox" name="remove_portrait"> remove current portrait</span>
       <?php endif; ?>
     </label>
-    <label>Logo image <input type="file" name="logo" accept="image/jpeg,image/png,image/webp">
-      <small>current: <?= esc($config['logo'] ?: 'none — your name shows as text') ?></small>
+    <label>Logo image <input type="file" name="logo" accept="image/jpeg,image/png,image/webp" data-preview="preview-logo">
+      <img id="preview-logo" class="image-preview" alt=""
+        <?php if ($config['logo']): ?>src="<?= esc(wpl_upload_url($config['logo'])) ?>"<?php else: ?>hidden<?php endif; ?>>
+      <small><?= $config['logo'] ? '' : 'none — your name shows as text' ?></small>
       <?php if ($config['logo']): ?>
         <span class="check"><input type="checkbox" name="remove_logo"> remove current logo (show name as text)</span>
       <?php endif; ?>
