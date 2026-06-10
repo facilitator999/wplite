@@ -27,20 +27,22 @@ $icons = [
 </head>
 <body>
 <header class="site-header">
-  <a class="logo" href="<?= esc(wpl_url()) ?>">
-    <?php if (!empty($config['logo']) && is_file(WPL_UPLOADS . '/' . basename($config['logo']))): ?>
-      <img src="<?= esc(wpl_upload_url($config['logo'])) ?>" alt="<?= esc($config['site_name']) ?>">
-    <?php else: ?>
-      <span class="logo-text"><?= esc($config['site_name']) ?></span>
-    <?php endif; ?>
-  </a>
-  <nav class="socials" aria-label="Social links">
-    <?php foreach ($config['socials'] as $key => $link): ?>
-      <?php if ($link === '' || !isset($icons[$key])) continue; ?>
-      <?php $href = $key === 'email' ? 'mailto:' . $link : $link; ?>
-      <a href="<?= esc($href) ?>" aria-label="<?= esc(ucfirst($key)) ?>" <?= $key === 'email' ? '' : 'target="_blank" rel="noopener"' ?>><?= $icons[$key] ?></a>
-    <?php endforeach; ?>
-  </nav>
+  <div class="header-inner">
+    <a class="logo" href="<?= esc(wpl_url()) ?>">
+      <?php if (!empty($config['logo']) && is_file(WPL_UPLOADS . '/' . basename($config['logo']))): ?>
+        <img src="<?= esc(wpl_upload_url($config['logo'])) ?>" alt="<?= esc($config['site_name']) ?>">
+      <?php else: ?>
+        <span class="logo-text"><?= esc($config['site_name']) ?></span>
+      <?php endif; ?>
+    </a>
+    <nav class="socials" aria-label="Social links">
+      <?php foreach ($config['socials'] as $key => $link): ?>
+        <?php if ($link === '' || !isset($icons[$key])) continue; ?>
+        <?php $href = $key === 'email' ? 'mailto:' . $link : $link; ?>
+        <a href="<?= esc($href) ?>" aria-label="<?= esc(ucfirst($key)) ?>" <?= $key === 'email' ? '' : 'target="_blank" rel="noopener"' ?>><?= $icons[$key] ?></a>
+      <?php endforeach; ?>
+    </nav>
+  </div>
 </header>
 
 <main>

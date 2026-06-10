@@ -37,11 +37,18 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 0 72px; }
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line);
 }
-.site-header {
+/* inner wrapper shares --max and side padding with the page content below,
+   so the logo and socials line up with the content edges */
+.header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px max(20px, calc((100% - var(--max)) / 2));
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 16px;
+}
+@media (min-width: 900px) {
+  .header-inner { padding: 16px 24px; }
 }
 .logo img { height: 34px; width: auto; }
 .logo-text {
