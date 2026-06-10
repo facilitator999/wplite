@@ -182,6 +182,29 @@ textarea {
 .nav-locations legend { font-size: 13px; font-weight: 600; padding: 0 6px; }
 .nav-locations small { width: 100%; color: var(--muted); font-weight: 400; }
 
+/* settings: grouped sections, fields flow into two columns on desktop */
+.settings-form { gap: 22px; }
+.settings-group {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px 18px;
+  margin: 0;
+  display: grid;
+  gap: 16px;
+}
+.settings-group legend {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 6px;
+}
+@media (min-width: 760px) {
+  .settings-group { grid-template-columns: 1fr 1fr; gap: 16px 24px; align-items: start; }
+  .settings-group .span-all { grid-column: 1 / -1; }
+}
+
 .gallery-manage { display: flex; flex-wrap: wrap; gap: 12px; }
 .gallery-item { width: 104px; font-weight: 400; cursor: pointer; }
 .gallery-item img {

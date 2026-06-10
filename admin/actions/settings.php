@@ -60,22 +60,40 @@ admin_nav('settings');
 <h1>Settings</h1>
 <?php if ($msg): ?><p class="msg"><?= esc($msg) ?></p><?php endif; ?>
 <?php if ($err): ?><p class="msg err"><?= esc($err) ?></p><?php endif; ?>
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" class="settings-form">
   <?= admin_csrf_field() ?>
-  <label>Site / person name <input type="text" name="site_name" value="<?= esc($config['site_name']) ?>" required></label>
-  <label>Blurb (one line under your name) <input type="text" name="blurb" value="<?= esc($config['blurb']) ?>"></label>
-  <label>Accent colour <input type="color" name="accent" value="<?= esc($config['accent']) ?>"></label>
-  <label>Portrait photo <input type="file" name="portrait" accept="image/jpeg,image/png,image/webp">
-    <small>current: <?= esc($config['portrait']) ?></small></label>
-  <label>Logo image <input type="file" name="logo" accept="image/jpeg,image/png,image/webp">
-    <small>current: <?= esc($config['logo']) ?> (leave empty to show your name as text)</small></label>
-  <?php foreach ($config['socials'] as $key => $val): ?>
-    <label><?= esc(ucfirst($key)) ?> <?= $key === 'email' ? 'address' : 'URL' ?>
-      <input type="<?= $key === 'email' ? 'email' : 'text' ?>" name="social_<?= esc($key) ?>" value="<?= esc($val) ?>"></label>
-  <?php endforeach; ?>
-  <label>Posts per scroll batch <input type="text" name="batch_size" value="<?= esc((string)$config['batch_size']) ?>"></label>
-  <label>New admin password (leave empty to keep current) <input type="password" name="new_password" minlength="8" autocomplete="new-password"></label>
-  <button class="btn">Save settings</button>
+
+  <fieldset class="settings-group">
+    <legend>Profile</legend>
+    <label>Site / person name <input type="text" name="site_name" value="<?= esc($config['site_name']) ?>" required></label>
+    <label>Accent colour <input type="color" name="accent" value="<?= esc($config['accent']) ?>"></label>
+    <label class="span-all">Blurb (one line under your name) <input type="text" name="blurb" value="<?= esc($config['blurb']) ?>"></label>
+  </fieldset>
+
+  <fieldset class="settings-group">
+    <legend>Images</legend>
+    <label>Portrait photo <input type="file" name="portrait" accept="image/jpeg,image/png,image/webp">
+      <small>current: <?= esc($config['portrait'] ?: 'none') ?></small></label>
+    <label>Logo image <input type="file" name="logo" accept="image/jpeg,image/png,image/webp">
+      <small>current: <?= esc($config['logo'] ?: 'none') ?> (leave empty to show your name as text)</small></label>
+  </fieldset>
+
+  <fieldset class="settings-group">
+    <legend>Social links</legend>
+    <?php foreach ($config['socials'] as $key => $val): ?>
+      <label><?= esc(ucfirst($key)) ?> <?= $key === 'email' ? 'address' : 'URL' ?>
+        <input type="<?= $key === 'email' ? 'email' : 'text' ?>" name="social_<?= esc($key) ?>" value="<?= esc($val) ?>"></label>
+    <?php endforeach; ?>
+  </fieldset>
+
+  <fieldset class="settings-group">
+    <legend>Feed &amp; security</legend>
+    <label>Posts per scroll batch <input type="text" name="batch_size" value="<?= esc((string)$config['batch_size']) ?>"></label>
+    <label>New admin password <input type="password" name="new_password" minlength="8" autocomplete="new-password">
+      <small>leave empty to keep current</small></label>
+  </fieldset>
+
+  <div><button class="btn">Save settings</button></div>
 </form>
 <?php
 admin_foot();
