@@ -54,5 +54,6 @@ if (!wpl_is_authed()) {
 require __DIR__ . '/actions/' . match ($action) {
     'pages' => 'pages.php',
     'settings' => 'settings.php',
+    'upload' => 'upload.php', // in-editor image uploads (JSON)
     default => 'posts.php', // dashboard, edit, delete, unknown actions
 };

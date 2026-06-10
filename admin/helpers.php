@@ -40,7 +40,16 @@ function admin_foot(): void
         forceSync: true,
         minHeight: window.innerWidth < 760 ? '50vh' : '320px',
         toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|',
-                  'link', '|', 'preview', 'fullscreen'],
+                  'link', 'upload-image', '|', 'preview', 'fullscreen'],
+        // Inline body images: toolbar button, drag-drop, or paste. Uploads go
+        // through the same pipeline as featured images.
+        uploadImage: true,
+        imageUploadEndpoint: <?= json_encode(wpl_url('admin/?action=upload')) ?>,
+        imageCSRFToken: <?= json_encode(wpl_csrf_token()) ?>,
+        imageCSRFName: 'csrf',
+        imageMaxSize: 10 * 1024 * 1024,
+        imageAccept: 'image/jpeg, image/png, image/webp',
+        errorCallback: function (msg) { alert(msg); },
       });
     })();
     </script>
