@@ -24,6 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $new['batch_size'] = max(3, min(60, (int)($_POST['batch_size'] ?? 12)));
 
         foreach (['portrait', 'logo'] as $field) {
+            if (isset($_POST['remove_' . $field])) {
+                wpl_delete_images($new[$field]); // no-op for seeded names like logo.svg
+                $new[$field] = '';
+            }
             if (!empty($_FILES[$field]['name'])) {
                 $up = admin_upload_image($_FILES[$field]);
                 if ($up['err'] !== '') {
@@ -73,9 +77,17 @@ admin_nav('settings');
   <fieldset class="settings-group">
     <legend>Images</legend>
     <label>Portrait photo <input type="file" name="portrait" accept="image/jpeg,image/png,image/webp">
-      <small>current: <?= esc($config['portrait'] ?: 'none') ?></small></label>
+      <small>current: <?= esc($config['portrait'] ?: 'none') ?></small>
+      <?php if ($config['portrait']): ?>
+        <span class="check"><input type="checkbox" name="remove_portrait"> remove current portrait</span>
+      <?php endif; ?>
+    </label>
     <label>Logo image <input type="file" name="logo" accept="image/jpeg,image/png,image/webp">
-      <small>current: <?= esc($config['logo'] ?: 'none') ?> (leave empty to show your name as text)</small></label>
+      <small>current: <?= esc($config['logo'] ?: 'none — your name shows as text') ?></small>
+      <?php if ($config['logo']): ?>
+        <span class="check"><input type="checkbox" name="remove_logo"> remove current logo (show name as text)</span>
+      <?php endif; ?>
+    </label>
   </fieldset>
 
   <fieldset class="settings-group">
