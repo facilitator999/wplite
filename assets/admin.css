@@ -170,6 +170,18 @@ textarea {
 .check { display: flex; align-items: center; gap: 9px; font-size: 14px; }
 .check input { accent-color: var(--accent); width: 16px; height: 16px; }
 
+.nav-locations {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px 14px;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 26px;
+}
+.nav-locations legend { font-size: 13px; font-weight: 600; padding: 0 6px; }
+.nav-locations small { width: 100%; color: var(--muted); font-weight: 400; }
+
 .gallery-manage { display: flex; flex-wrap: wrap; gap: 12px; }
 .gallery-item { width: 104px; font-weight: 400; cursor: pointer; }
 .gallery-item img {

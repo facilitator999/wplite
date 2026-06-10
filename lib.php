@@ -265,11 +265,19 @@ function wpl_get(string $dir, string $slug): ?array
     return wpl_hydrate($slug, $doc);
 }
 
+// Places a page link can appear; pages default to the footer.
+const WPL_NAV_LOCATIONS = ['header', 'side', 'footer'];
+
 function wpl_hydrate(string $slug, array $doc): array
 {
     $m = $doc['meta'];
     $image = basename($m['image'] ?? '');
+    // 'nav: header side' — space-separated locations; absent = footer, 'none' = unlisted.
+    $nav = isset($m['nav'])
+        ? array_values(array_intersect(preg_split('/\s+/', strtolower($m['nav']), -1, PREG_SPLIT_NO_EMPTY), WPL_NAV_LOCATIONS))
+        : ['footer'];
     return [
+        'nav' => $nav,
         'slug' => $slug,
         'title' => $m['title'] ?? $slug,
         'date' => $m['date'] ?? '',
@@ -299,6 +307,12 @@ function wpl_posts(): array
     }
     usort($posts, fn($a, $b) => strcmp($b['date'], $a['date']) ?: strcmp($a['slug'], $b['slug']));
     return $posts;
+}
+
+/** Pages whose links belong in $location ('header' | 'side' | 'footer'). */
+function wpl_pages_in(string $location, array $pages): array
+{
+    return array_values(array_filter($pages, fn($p) => in_array($location, $p['nav'], true)));
 }
 
 function wpl_pages(): array

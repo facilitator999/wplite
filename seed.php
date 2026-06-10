@@ -87,14 +87,14 @@ foreach ($posts as $i => $p) {
     echo "  post: {$p['slug']}\n";
 }
 
-$pages = [
-    'about' => ['About', "I'm **Jane Founder** — this is my corner of the web.\n\nI write about building products, the odd political diary entry (for the MP demo flavour), and whatever else survives the drafts folder.\n\nThis site runs on WPlite: no database, no plugins, just files."],
-    'contact' => ['Contact', "The fastest way to reach me is email: [hello@example.com](mailto:hello@example.com)\n\nYou can also find me on the social links at the top of every page.\n\nI read everything, even if I cannot reply to it all."],
-    'privacy' => ['Privacy', "This site keeps things simple.\n\n- No analytics trackers\n- No advertising cookies\n- One functional session cookie, used only if you log in to the admin area\n\nIf you email me, I keep your message for as long as the conversation needs and nothing more."],
+$pages = [ // slug => [title, nav locations, body]
+    'about' => ['About', 'side footer', "I'm **Jane Founder** — this is my corner of the web.\n\nI write about building products, the odd political diary entry (for the MP demo flavour), and whatever else survives the drafts folder.\n\nThis site runs on WPlite: no database, no plugins, just files."],
+    'contact' => ['Contact', 'side footer', "The fastest way to reach me is email: [hello@example.com](mailto:hello@example.com)\n\nYou can also find me on the social links at the top of every page.\n\nI read everything, even if I cannot reply to it all."],
+    'privacy' => ['Privacy', 'footer', "This site keeps things simple.\n\n- No analytics trackers\n- No advertising cookies\n- One functional session cookie, used only if you log in to the admin area\n\nIf you email me, I keep your message for as long as the conversation needs and nothing more."],
 ];
 
-foreach ($pages as $slug => [$title, $body]) {
-    wpl_write(WPL_PAGES . "/$slug.md", wpl_serialize(['title' => $title], $body));
+foreach ($pages as $slug => [$title, $nav, $body]) {
+    wpl_write(WPL_PAGES . "/$slug.md", wpl_serialize(['title' => $title, 'nav' => $nav], $body));
     echo "  page: $slug\n";
 }
 

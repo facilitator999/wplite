@@ -35,6 +35,14 @@ $icons = [
         <span class="logo-text"><?= esc($config['site_name']) ?></span>
       <?php endif; ?>
     </a>
+    <?php $headerPages = wpl_pages_in('header', $pages); ?>
+    <?php if ($headerPages): ?>
+      <nav class="header-nav" aria-label="Pages">
+        <?php foreach ($headerPages as $p): ?>
+          <a href="<?= esc(wpl_url($p['slug'])) ?>"><?= esc($p['title']) ?></a>
+        <?php endforeach; ?>
+      </nav>
+    <?php endif; ?>
     <nav class="socials" aria-label="Social links">
       <?php foreach ($config['socials'] as $key => $link): ?>
         <?php if ($link === '' || !isset($icons[$key])) continue; ?>
@@ -46,12 +54,17 @@ $icons = [
 </header>
 
 <main>
-<?php require __DIR__ . '/' . ($view === '404' ? 'page' : $view) . '.php'; ?>
+<div class="profile-layout">
+  <?php require __DIR__ . '/profile-card.php'; ?>
+  <div class="feed">
+    <?php require __DIR__ . '/' . ($view === '404' ? 'page' : $view) . '.php'; ?>
+  </div>
+</div>
 </main>
 
 <footer class="site-footer">
   <nav class="footer-links">
-    <?php foreach ($pages as $p): ?>
+    <?php foreach (wpl_pages_in('footer', $pages) as $p): ?>
       <a href="<?= esc(wpl_url($p['slug'])) ?>"><?= esc($p['title']) ?></a>
     <?php endforeach; ?>
   </nav>
