@@ -17,6 +17,8 @@ if ($action === 'edit') {
             $newSlug = slugify((string)($_POST['slug'] ?? '')) ?: slugify($title);
             $date = preg_match('/^\d{4}-\d{2}-\d{2}$/', $_POST['date'] ?? '') ? $_POST['date'] : date('Y-m-d');
             $body = str_replace("\r\n", "\n", (string)($_POST['body'] ?? ''));
+            $excerpt = trim((string)($_POST['excerpt'] ?? ''));
+            $draft = ($_POST['status'] ?? 'published') === 'draft';
             $image = $editing['image'] ?? '';
             $gallery = $editing['images'] ?? [];
 
@@ -70,6 +72,8 @@ if ($action === 'edit') {
                     'image' => $image,
                     'images' => implode(' ', $gallery),
                     'featured' => isset($_POST['featured']),
+                    'draft' => $draft,
+                    'excerpt' => $excerpt,
                 ];
                 if (admin_write_entry(WPL_POSTS, $editing['slug'] ?? null, $newSlug, $meta, $body)) {
                     header('Location: ' . wpl_url('admin/?saved=' . rawurlencode($newSlug)));
@@ -81,7 +85,8 @@ if ($action === 'edit') {
             $editing = [
                 'slug' => $newSlug, 'title' => $title, 'date' => $date,
                 'image' => $image, 'images' => $gallery,
-                'featured' => isset($_POST['featured']), 'body' => $body,
+                'featured' => isset($_POST['featured']), 'draft' => $draft,
+                'excerpt' => $excerpt, 'body' => $body,
             ];
         }
     }
@@ -96,7 +101,16 @@ if ($action === 'edit') {
       <label>Title <input type="text" name="title" value="<?= esc($editing['title'] ?? '') ?>" required autofocus></label>
       <label>Slug (URL) <input type="text" name="slug" value="<?= esc($editing['slug'] ?? '') ?>" placeholder="auto from title"></label>
       <label>Date <input type="date" name="date" value="<?= esc($editing['date'] ?? date('Y-m-d')) ?>"></label>
+      <label>Status
+        <select name="status">
+          <option value="published">Published</option>
+          <option value="draft" <?= !empty($editing['draft']) ? 'selected' : '' ?>>Draft (hidden from the site)</option>
+        </select>
+      </label>
       <label class="check"><input type="checkbox" name="featured" <?= !empty($editing['featured']) ? 'checked' : '' ?>> Featured (show in carousel)</label>
+      <label>Excerpt (short summary — used as the post's search/share description)
+        <input type="text" name="excerpt" value="<?= esc($editing['excerpt'] ?? '') ?>" maxlength="200">
+      </label>
       <label>Featured image <input type="file" name="image" accept="image/jpeg,image/png,image/webp">
         <?php if (!empty($editing['image'])): ?><small>current: <?= esc($editing['image']) ?></small><?php endif; ?>
       </label>
@@ -158,11 +172,12 @@ if (isset($_GET['saved'])) {
 </div>
 <?php if ($msg): ?><p class="msg"><?= esc($msg) ?></p><?php endif; ?>
 <table>
-  <tr><th>Title</th><th>Date</th><th>Featured</th><th></th></tr>
-  <?php foreach (wpl_posts() as $p): ?>
+  <tr><th>Title</th><th>Date</th><th>Status</th><th>Featured</th><th></th></tr>
+  <?php foreach (wpl_posts(true) as $p): ?>
     <tr>
       <td><a href="<?= esc(wpl_url('admin/?action=edit&slug=' . $p['slug'])) ?>"><?= esc($p['title']) ?></a></td>
       <td><?= esc($p['date']) ?></td>
+      <td><?= $p['draft'] ? '<span class="badge-draft">Draft</span>' : 'Published' ?></td>
       <td><?= $p['featured'] ? '★' : '' ?></td>
       <td>
         <form method="post" action="<?= esc(wpl_url('admin/?action=delete')) ?>"

@@ -97,8 +97,11 @@ if ($route === '') {
     exit;
 }
 
-/* post, then page, then 404 */
+/* post, then page, then 404 — drafts are admin-only, invisible here */
 $post = wpl_get(WPL_POSTS, $route);
+if ($post !== null && $post['draft']) {
+    $post = null;
+}
 if ($post !== null) {
     $pages = wpl_pages();
     $view = 'post';

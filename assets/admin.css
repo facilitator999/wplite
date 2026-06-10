@@ -134,7 +134,7 @@ label {
 label small { font-weight: 400; color: var(--muted); }
 
 input[type=text], input[type=password], input[type=date],
-input[type=url], input[type=email], textarea {
+input[type=url], input[type=email], select, textarea {
   width: 100%;
   padding: 10px 13px;
   background: var(--card);
@@ -144,7 +144,17 @@ input[type=url], input[type=email], textarea {
   color: var(--ink);
   transition: border-color .12s, box-shadow .12s;
 }
-input:focus, textarea:focus {
+select { width: auto; cursor: pointer; }
+.badge-draft {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 99px;
+  background: rgba(194, 24, 91, .12);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--ring);

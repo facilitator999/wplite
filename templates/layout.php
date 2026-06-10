@@ -21,7 +21,7 @@ $icons = [
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= esc($titles[$view] ?? $config['site_name']) ?></title>
-<meta name="description" content="<?= esc($config['blurb']) ?>">
+<meta name="description" content="<?= esc($view === 'post' && $post['excerpt'] !== '' ? $post['excerpt'] : $config['blurb']) ?>">
 <link rel="stylesheet" href="<?= esc(wpl_url('assets/style.css')) ?>?v=<?= filemtime(WPL_ROOT . '/assets/style.css') ?>">
 <style>:root { --accent: <?= esc($config['accent']) ?>; }</style>
 </head>

@@ -286,13 +286,14 @@ function wpl_hydrate(string $slug, array $doc): array
         'images' => array_values(array_filter(array_map('basename',
             preg_split('/\s+/', $m['images'] ?? '', -1, PREG_SPLIT_NO_EMPTY)))),
         'featured' => in_array(strtolower($m['featured'] ?? ''), ['true', 'yes', '1'], true),
-        'excerpt' => $m['excerpt'] ?? mb_substr(trim(strip_tags($doc['body'])), 0, 140),
+        'draft' => in_array(strtolower($m['draft'] ?? ''), ['true', 'yes', '1'], true),
+        'excerpt' => trim($m['excerpt'] ?? ''),
         'body' => $doc['body'],
     ];
 }
 
-/** All posts, newest first. Parses front matter only (body kept — files are small). */
-function wpl_posts(): array
+/** All posts, newest first. Drafts are excluded unless $withDrafts (admin). */
+function wpl_posts(bool $withDrafts = false): array
 {
     $posts = [];
     foreach (glob(WPL_POSTS . '/*.md') ?: [] as $path) {
@@ -302,7 +303,10 @@ function wpl_posts(): array
         }
         $doc = wpl_parse_file($path);
         if ($doc !== null) {
-            $posts[] = wpl_hydrate($slug, $doc);
+            $post = wpl_hydrate($slug, $doc);
+            if ($withDrafts || !$post['draft']) {
+                $posts[] = $post;
+            }
         }
     }
     usort($posts, fn($a, $b) => strcmp($b['date'], $a['date']) ?: strcmp($a['slug'], $b['slug']));
