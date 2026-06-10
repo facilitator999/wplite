@@ -55,7 +55,7 @@ $icons = [
 </header>
 
 <main>
-<div class="profile-layout">
+<div class="profile-layout<?= $view === 'home' ? '' : ' is-subpage' ?>">
   <?php require __DIR__ . '/profile-card.php'; ?>
   <div class="feed" id="content" tabindex="-1">
     <?php require __DIR__ . '/' . ($view === '404' ? 'page' : $view) . '.php'; ?>

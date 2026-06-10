@@ -199,6 +199,13 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 0 72px; }
 .profile-links a:hover { color: var(--accent); }
 .feed { min-width: 0; }
 
+/* on phones the profile card only appears on the home feed; on posts and
+   pages it would push the content below the fold */
+@media (max-width: 899px) {
+  .is-subpage .profile-card { display: none; }
+  .is-subpage { padding-top: 8px; }
+}
+
 @media (min-width: 900px) {
   .profile-layout {
     display: grid;
